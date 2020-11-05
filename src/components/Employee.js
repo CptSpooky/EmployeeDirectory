@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { EmployeeContext } from './App'
 
 export default function Employee(props) { 
-    const { handleEmployeeDelete } = useContext(EmployeeContext);
+    const { handleEmployeeDelete, handleEmployeeSelect } = useContext(EmployeeContext);
     const {
         id,
         name, 
@@ -13,7 +13,7 @@ export default function Employee(props) {
             <div className="">
                 <h3 className="">{name}</h3>
                 <div>
-                    <button className="">Edit</button>
+                    <button className="" onClick={()=> handleEmployeeSelect(id)}>Edit</button>
                     <button className="" onClick={()=> handleEmployeeDelete(id)}>Delete</button>
                 </div>
             </div>

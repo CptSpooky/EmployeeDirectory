@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import EmployeeList from './EmployeeList';
+import EmployeeEdit from './EmployeeEdit';
 import '../css/App.css';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -8,8 +9,9 @@ const LOCAL_STORAGE_KEY = 'employeeDirectory.employees'
 
 
 function App() {
-  const [employees, setEmployee] = useState(sampleEmployees)
-
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState();
+  const [employees, setEmployee] = useState(sampleEmployees);
+  const selectedEmployee = employees.find(employee => employee.id === selectedEmployeeId);
   //load from local storage
   useEffect(()=>{
     const employeeJSON = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -23,7 +25,13 @@ function App() {
 
   const employeeContextValue = {
     handleEmployeeAdd,
-    handleEmployeeDelete
+    handleEmployeeDelete, 
+    handleEmployeeSelect,
+    handleEmployeeChange
+  }
+
+  function handleEmployeeSelect(id) {
+    setSelectedEmployeeId(id)
   }
 
   function handleEmployeeAdd(){
@@ -35,6 +43,13 @@ function App() {
     setEmployee([...employees, newEmployee])
   }
 
+  function handleEmployeeChange(id, employee){
+    const newEmployee = [...employees];
+    const index = newEmployee.findIndex(r => r.id ===id);
+    newEmployee[index] = employee;
+    setEmployee(newEmployee)
+  }
+
   function handleEmployeeDelete(id){
     setEmployee(employees.filter(employee => employee.id !== id))
   }
@@ -42,6 +57,7 @@ function App() {
   return (
     <EmployeeContext.Provider value={employeeContextValue}>
       <EmployeeList employees={employees}/>
+      {selectedEmployee && <EmployeeEdit employee={selectedEmployee} />}
     </EmployeeContext.Provider>
   )
 }
