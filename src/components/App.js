@@ -3,8 +3,15 @@ import EmployeeList from './EmployeeList';
 import '../css/App.css';
 import { v4 as uuidv4 } from 'uuid';
 
+export const EmployeeContext = React.createContext()
+
 function App() {
   const [employees, setEmployee] = useState(sampleEmployees)
+
+  const employeeContextValue = {
+    handleEmployeeAdd,
+    handleEmployeeDelete
+  }
 
   function handleEmployeeAdd(){
     const newEmployee = {
@@ -14,12 +21,15 @@ function App() {
     }
     setEmployee([...employees, newEmployee])
   }
+
+  function handleEmployeeDelete(id){
+    setEmployee(employees.filter(employee => employee.id !== id))
+  }
   
   return (
-    <EmployeeList 
-      employees={employees}
-      handleEmployeeAdd={handleEmployeeAdd}
-    />
+    <EmployeeContext.Provider value={employeeContextValue}>
+      <EmployeeList employees={employees}/>
+    </EmployeeContext.Provider>
   )
 }
 

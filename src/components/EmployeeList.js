@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Employee from './Employee'
+import { EmployeeContext } from './App'
 
-export default function EmployeeList({ employees, handleEmployeeAdd }) {
+export default function EmployeeList({ employees }) {
+    const { handleEmployeeAdd } = useContext(EmployeeContext);
     return (
         <div className="">
             <div>

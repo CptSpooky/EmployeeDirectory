@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { EmployeeContext } from './App'
 
 export default function Employee(props) { 
+    const { handleEmployeeDelete } = useContext(EmployeeContext);
     const {
+        id,
         name, 
         role
     } = props;
@@ -11,7 +14,7 @@ export default function Employee(props) {
                 <h3 className="">{name}</h3>
                 <div>
                     <button className="">Edit</button>
-                    <button className="">Delete</button>
+                    <button className="" onClick={()=> handleEmployeeDelete(id)}>Delete</button>
                 </div>
             </div>
             <div className="">
