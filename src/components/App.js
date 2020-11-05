@@ -1,12 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import EmployeeList from './EmployeeList';
 import '../css/App.css';
 import { v4 as uuidv4 } from 'uuid';
 
 export const EmployeeContext = React.createContext()
+const LOCAL_STORAGE_KEY = 'employeeDirectory.employees'
+
 
 function App() {
   const [employees, setEmployee] = useState(sampleEmployees)
+
+  //load from local storage
+  useEffect(()=>{
+    const employeeJSON = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (employeeJSON != null) setEmployee(JSON.parse(employeeJSON))
+  }, [])
+
+  //save to local storage
+  useEffect(()=>{
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(employees))
+  }, [employees])
 
   const employeeContextValue = {
     handleEmployeeAdd,
