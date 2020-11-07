@@ -9,40 +9,71 @@ const LOCAL_STORAGE_KEY = 'employeeDirectory.employees'
 
 
 function App() {
+  //set states
   const [selectedEmployeeId, setSelectedEmployeeId] = useState();
   const [employees, setEmployee] = useState(sampleEmployees);
+  const [search, setSearch] = useState('');
+  const [filteredEmployees, setFilteredEmployees] = useState();
+
+  //Context
+  const employeeContextValue = {
+    handleEmployeeAdd,
+    handleEmployeeDelete, 
+    handleEmployeeSelect,
+    handleEmployeeChange,
+    handleEmployeeSearch
+  }
+
+  // sets filtered name to displayed list
+  let activeList = employees;
+  if(search !== ''){activeList = filteredEmployees;}
+
+  // employee selected for edit
   const selectedEmployee = employees.find(employee => employee.id === selectedEmployeeId);
-  //load from local storage
+
+  // filter employees by name
+  useEffect(()=> {
+    setFilteredEmployees(
+      employees.filter(employee => {
+        if(search === ''){return true;}
+        return employee.name.toLowerCase().startsWith(search.toLowerCase());
+      })
+    )
+  }, [search, employees])
+
+  // load from local storage
   useEffect(()=>{
     const employeeJSON = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (employeeJSON != null) setEmployee(JSON.parse(employeeJSON))
   }, [])
 
-  //save to local storage
+  // save to local storage
   useEffect(()=>{
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(employees))
   }, [employees])
 
-  const employeeContextValue = {
-    handleEmployeeAdd,
-    handleEmployeeDelete, 
-    handleEmployeeSelect,
-    handleEmployeeChange
+  // handle employee search
+  function handleEmployeeSearch(name) {
+    setSearch(name)
   }
 
+  // handle selected employee
   function handleEmployeeSelect(id) {
     setSelectedEmployeeId(id)
   }
 
+  // handle adding employee
   function handleEmployeeAdd(){
     const newEmployee = {
       id: uuidv4(),
       name: 'New',
       role: 1
     }
+    setSelectedEmployeeId(newEmployee.id)
     setEmployee([...employees, newEmployee])
   }
 
+  // handle employee edit
   function handleEmployeeChange(id, employee){
     const newEmployee = [...employees];
     const index = newEmployee.findIndex(r => r.id ===id);
@@ -50,18 +81,20 @@ function App() {
     setEmployee(newEmployee)
   }
 
+  // handle employee delete
   function handleEmployeeDelete(id){
     setEmployee(employees.filter(employee => employee.id !== id))
   }
   
   return (
     <EmployeeContext.Provider value={employeeContextValue}>
-      <EmployeeList employees={employees}/>
+      <EmployeeList employees={activeList} />
       {selectedEmployee && <EmployeeEdit employee={selectedEmployee} />}
     </EmployeeContext.Provider>
   )
 }
 
+// sample data
 const sampleEmployees = [
   {
     id: 1,
